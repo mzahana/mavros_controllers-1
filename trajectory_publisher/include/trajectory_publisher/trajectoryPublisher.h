@@ -16,6 +16,7 @@
 #include <geometry_msgs/PoseStamped.h>
 #include <std_srvs/SetBool.h>
 #include <nav_msgs/Path.h>
+#include <mavconn/mavlink_dialect.h>
 #include <mavros_msgs/PositionTarget.h>
 #include "controller_msgs/FlatTarget.h"
 #include "trajectory_publisher/trajectory.h"
