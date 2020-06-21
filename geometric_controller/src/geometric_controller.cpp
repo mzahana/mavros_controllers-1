@@ -16,6 +16,7 @@ geometricCtrl::geometricCtrl(const ros::NodeHandle& nh, const ros::NodeHandle& n
 
   referenceSub_=nh_.subscribe("reference/setpoint",1, &geometricCtrl::targetCallback,this,ros::TransportHints().tcpNoDelay());
   flatreferenceSub_ = nh_.subscribe("reference/flatsetpoint", 1, &geometricCtrl::flattargetCallback, this, ros::TransportHints().tcpNoDelay());
+  fast_planner_referenceSub_ = nh_.subscribe("planning/pos_cmd", 1, &geometricCtrl::fastPlannerTargetCallback, this, ros::TransportHints().tcpNoDelay());
   yawreferenceSub_ = nh_.subscribe("reference/yaw", 1, &geometricCtrl::yawtargetCallback, this, ros::TransportHints().tcpNoDelay());
   multiDOFJointSub_ = nh_.subscribe("/command/trajectory", 1, &geometricCtrl::multiDOFJointCallback, this, ros::TransportHints().tcpNoDelay());
   mavstateSub_ = nh_.subscribe("/mavros/state", 1, &geometricCtrl::mavstateCallback, this,ros::TransportHints().tcpNoDelay());
@@ -69,6 +70,20 @@ geometricCtrl::geometricCtrl(const ros::NodeHandle& nh, const ros::NodeHandle& n
 }
 geometricCtrl::~geometricCtrl() {
   //Destructor
+}
+
+void geometricCtrl::fastPlannerTargetCallback(const quadrotor_msgs::PositionCommand& msg){
+  targetPos_prev_ = targetPos_;
+  targetVel_prev_ = targetVel_;
+
+  reference_request_now_ = ros::Time::now();
+  reference_request_dt_ = (reference_request_now_ - reference_request_last_).toSec();
+
+  targetPos_ = toEigen(msg.position);
+  targetVel_ = toEigen(msg.velocity);
+  targetAcc_ = toEigen(msg.acceleration);
+  targetJerk_ = Eigen::Vector3d::Zero();
+  targetSnap_ = Eigen::Vector3d::Zero();
 }
 
 void geometricCtrl::targetCallback(const geometry_msgs::TwistStamped& msg) {

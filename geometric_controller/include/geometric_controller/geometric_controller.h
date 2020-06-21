@@ -32,6 +32,7 @@
 #include <trajectory_msgs/MultiDOFJointTrajectory.h>
 #include <dynamic_reconfigure/server.h>
 #include <geometric_controller/GeometricControllerConfig.h>
+#include <quadrotor_msgs/PositionCommand.h>
 
 #define ERROR_QUATERNION  1
 #define ERROR_GEOMETRIC   2
@@ -58,6 +59,7 @@ class geometricCtrl
     ros::NodeHandle nh_private_;
     ros::Subscriber referenceSub_;
     ros::Subscriber flatreferenceSub_;
+    ros::Subscriber fast_planner_referenceSub_;
     ros::Subscriber multiDOFJointSub_;
     ros::Subscriber mavstateSub_;
     ros::Subscriber mavposeSub_, gzmavposeSub_;
@@ -114,6 +116,7 @@ class geometricCtrl
     void odomCallback(const nav_msgs::OdometryConstPtr& odomMsg);
     void targetCallback(const geometry_msgs::TwistStamped& msg);
     void flattargetCallback(const controller_msgs::FlatTarget& msg);
+    void fastPlannerTargetCallback(const quadrotor_msgs::PositionCommand& msg);
     void yawtargetCallback(const std_msgs::Float32& msg);
     void multiDOFJointCallback(const trajectory_msgs::MultiDOFJointTrajectory& msg);
     void keyboardCallback(const geometry_msgs::Twist& msg);
