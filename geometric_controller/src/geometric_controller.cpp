@@ -84,6 +84,8 @@ void geometricCtrl::fastPlannerTargetCallback(const quadrotor_msgs::PositionComm
   targetAcc_ = toEigen(msg.acceleration);
   targetJerk_ = Eigen::Vector3d::Zero();
   targetSnap_ = Eigen::Vector3d::Zero();
+
+  mavYaw_ = msg.yaw;
 }
 
 void geometricCtrl::targetCallback(const geometry_msgs::TwistStamped& msg) {
