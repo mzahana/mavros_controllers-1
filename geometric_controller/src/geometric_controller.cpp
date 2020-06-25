@@ -84,8 +84,10 @@ void geometricCtrl::fastPlannerTargetCallback(const quadrotor_msgs::PositionComm
   targetAcc_ = toEigen(msg.acceleration);
   targetJerk_ = Eigen::Vector3d::Zero();
   targetSnap_ = Eigen::Vector3d::Zero();
-
-  mavYaw_ = msg.yaw;
+  if(!velocity_yaw_){
+    mavYaw_ = msg.yaw;
+  }
+  
 }
 
 void geometricCtrl::targetCallback(const geometry_msgs::TwistStamped& msg) {
@@ -328,7 +330,7 @@ void geometricCtrl::computeBodyRateCmd(Eigen::Vector4d &bodyrate_cmd, const Eige
   /// Controller based on Faessler 2017
   const Eigen::Vector3d a_ref = target_acc;
   if(velocity_yaw_) {
-    mavYaw_ = std::atan2(-1.0 * mavVel_(1), mavVel_(0));
+    mavYaw_ = std::atan2(mavVel_(1), mavVel_(0));
   }
 
   const Eigen::Vector4d q_ref = acc2quaternion(a_ref - g_, mavYaw_);
